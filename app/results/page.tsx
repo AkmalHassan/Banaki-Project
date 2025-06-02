@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -28,7 +29,7 @@ export default function ResultsPage() {
         if (!res.ok) throw new Error('Failed to fetch answers');
 
         const data = await res.json();
-        setAnswers(data.answers || []);
+        setAnswers(data || []);
       } catch (err) {
         setError('Failed to fetch answers');
         console.error('Error fetching answers:', err);
