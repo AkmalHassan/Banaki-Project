@@ -27,35 +27,40 @@
 //   }
 // }
 
-// app/api/questions/route.ts
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
-import { Question } from '@/lib/models/Question';
+import mongoose from 'mongoose';
+import Question from '@/lib/models/Question';
 
 export async function GET() {
-  await connectToDatabase();
-  
   try {
+    await connectToDatabase();
+    
+    // Check if model is compiled
+    if (!mongoose.models.Question) {
+      throw new Error('Question model not registered');
+    }
+    
     const questions = await Question.find({})
       .sort({ order_index: 1 })
       .lean()
-      .exec(); // Add exec() for better promise handling
+      .exec();
     
-    // Add CORS headers
-    const headers = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET',
-      'Content-Type': 'application/json'
-    };
+    if (!questions || questions.length === 0) {
+      return NextResponse.json(
+        { error: "No questions found" }, 
+        { status: 404 }
+      );
+    }
     
-    return new NextResponse(JSON.stringify(questions), {
-      status: 200,
-      headers
-    });
+    return NextResponse.json(questions);
   } catch (error) {
     console.error('Database error:', error);
-    return new NextResponse(
-      JSON.stringify({ error: "Failed to fetch questions" }), 
+    return NextResponse.json(
+      { 
+        error: "Failed to fetch questions",
+        details: typeof error === 'object' && error !== null && 'message' in error ? (error as { message: string }).message : String(error)
+      }, 
       { status: 500 }
     );
   }
