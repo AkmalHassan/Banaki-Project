@@ -64,8 +64,8 @@ export default function ResultsPage() {
             Special Offer Unlocked!
           </h2>
           <p className="text-blue-700">
-            You earned 15% off your next camping trip! Use code:
-            <span className="font-bold ml-2">CAMP15</span>
+            You earned 5% off your next camping trip! Use code:
+            <span className="font-bold ml-2">CAMP5</span>
           </p>
         </div>
 
