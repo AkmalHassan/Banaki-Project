@@ -29,7 +29,7 @@
 // }
 
 import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import connectToDatabase from '@/lib/mongodb';
 import { Answer } from '@/lib/models/Answer';
 
 export async function GET(request: Request) {

@@ -57,7 +57,7 @@
 // }
 
 import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import connectToDatabase from '@/lib/mongodb';
 import { Answer } from '@/lib/models/Answer';
 import { Session } from '@/lib/models/Session';
 

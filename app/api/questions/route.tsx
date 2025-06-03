@@ -27,17 +27,36 @@
 //   }
 // }
 
+// app/api/questions/route.ts
 import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import connectToDatabase from '@/lib/mongodb';
 import { Question } from '@/lib/models/Question';
 
 export async function GET() {
   await connectToDatabase();
+  
   try {
-    const questions = await Question.find({}).sort({ order_index: 1 }).lean();
-    return NextResponse.json(questions);
+    const questions = await Question.find({})
+      .sort({ order_index: 1 })
+      .lean()
+      .exec(); // Add exec() for better promise handling
+    
+    // Add CORS headers
+    const headers = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET',
+      'Content-Type': 'application/json'
+    };
+    
+    return new NextResponse(JSON.stringify(questions), {
+      status: 200,
+      headers
+    });
   } catch (error) {
-    console.error('Failed to fetch questions:', error);
-    return NextResponse.json({ error: "Failed to fetch questions" }, { status: 500 });
+    console.error('Database error:', error);
+    return new NextResponse(
+      JSON.stringify({ error: "Failed to fetch questions" }), 
+      { status: 500 }
+    );
   }
 }

@@ -303,7 +303,11 @@ export default function QuestionFlow() {
     const fetchQuestions = async () => {
       try {
         const res = await fetch('/api/questions');
-        if (!res.ok) throw new Error('Failed to fetch questions');
+        if (!res.ok) {
+      // Get more detailed error info
+      const errorText = await res.text();
+      throw new Error(`HTTP ${res.status}: ${errorText}`);
+    }
         const data = await res.json();
         setQuestions(data);
         setCurrentQuestion(data.find((q: QuestionType) => q.key === 'travel_style') || null);
